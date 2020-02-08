@@ -1,0 +1,44 @@
+{
+  "name": "permission-geometry",
+  "version": "1.0.0",
+  "description": "converting complex multi dimensional permission rules to unique points in a plane",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec babel-node index.js",
+    "test": "node --inspect-brk ./node_modules/jest/bin/jest.js --watch --runInBand"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aminkrJ/permission-geometry.git"
+  },
+  "keywords": [
+    "geometry"
+  ],
+  "author": "Amin Karaji",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aminkrJ/permission-geometry/issues"
+  },
+  "homepage": "https://github.com/aminkrJ/permission-geometry#readme",
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/node": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "babel-jest": "^25.1.0",
+    "husky": "^4.2.1",
+    "jest": "^25.1.0",
+    "lint-staged": "^10.0.7",
+    "nodemon": "^2.0.2",
+    "prettier": "^1.19.1"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+}
