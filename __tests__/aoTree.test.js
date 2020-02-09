@@ -36,6 +36,7 @@ describe(".aoTree", () => {
     expect(root.right.right.right.val).toBe("6");
   });
 });
+
 describe("Node", () => {
   describe(".set", () => {
     it("node is a leaf", () => {
