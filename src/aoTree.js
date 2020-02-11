@@ -81,7 +81,7 @@ const cartesian = (left, right) => {
 };
 
 /*
- * convert one dimention and/or query string to a and/or tree
+ * convert one dimension and/or query string to a and/or tree
  */
 const queryToAoTree = query => {
   const tree = new AoTree();

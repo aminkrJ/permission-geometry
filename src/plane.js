@@ -5,17 +5,17 @@ const and = "and";
 const or = "or";
 
 function Plane() {
-  this.dimentions = [];
+  this.dimension = [];
   this.tree = new AoTree();
 }
 Plane.prototype.addDim = function(key, type, tree) {
-  this.dimentions.push(key);
+  this.dimension.push(key);
   let newNode = new AoNode(tree);
 
   if (this.tree.isEmpty()) {
     this.tree.add(newNode);
   } else {
-    let aoNode = new AoNode(this.dimentions.join(" "), type);
+    let aoNode = new AoNode(this.dimension.join(" "), type);
     aoNode.left = this.tree.root;
     aoNode.right = newNode;
     this.tree.root = aoNode;
@@ -33,7 +33,7 @@ Plane.prototype.points = function(node = null, curDim = 0) {
     this.points(node.left, curDim),
     this.points(node.right, curDim),
     node.type,
-    this.dimentions.length - curDim
+    this.dimension.length - curDim
   );
 };
 
