@@ -61,4 +61,4 @@ const aoTree = (val, parent = null) => {
   return node;
 };
 
-export { aoTree };
+export { aoTree, Node };
