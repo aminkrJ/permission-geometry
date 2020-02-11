@@ -59,15 +59,39 @@ describe("plane", () => {
         ["0", "0", "6"]
       ]);
     });
-    it.only("three dimensional with and", () => {
-      const firstDimension = aoTree("1 and 2");
+    it("three dimensional with and", () => {
+      dimension = aoTree("1 and 2");
       const anotherDimension = aoTree("3 and 4");
       const thirdDimension = aoTree("5 and 6");
-      plane.addDim("dim1", null, firstDimension);
+      plane.addDim("dim1", null, dimension);
       plane.addDim("dim2", "and", anotherDimension);
       plane.addDim("dim3", "and", thirdDimension);
       expect(plane.root.type).toBe("and");
-      expect(plane.set()).toEqual(["12", "34", "56"]);
+      expect(plane.set()).toEqual([["12", "34", "56"]]);
+    });
+    it("three dimensional with and ex 2", () => {
+      dimension = aoTree("1");
+      const anotherDimension = aoTree("2");
+      const thirdDimension = aoTree("3");
+      plane.addDim("dim1", null, dimension);
+      plane.addDim("dim2", "and", anotherDimension);
+      plane.addDim("dim3", "and", thirdDimension);
+      expect(plane.root.type).toBe("and");
+      expect(plane.set()).toEqual([["1", "2", "3"]]);
+    });
+    it("three dimensional with and/or", () => {
+      const anotherDimension = aoTree("3 or 4");
+      const thirdDimension = aoTree("5");
+      plane.addDim("dim1", null, dimension);
+      plane.addDim("dim2", "and", anotherDimension);
+      plane.addDim("dim3", "and", thirdDimension);
+      expect(plane.root.type).toBe("and");
+      expect(plane.set()).toEqual([
+        ["1", "3", "5"],
+        ["1", "4", "5"],
+        ["2", "3", "5"],
+        ["2", "4", "5"]
+      ]);
     });
   });
 });
