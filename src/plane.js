@@ -1,50 +1,40 @@
-import { Node } from "./aoTree";
+import { AoNode, AoTree } from "./aoTree";
 import _ from "lodash";
 
 const and = "and";
 const or = "or";
 
 function Plane() {
-  this.root = null;
   this.dimentions = [];
+  this.tree = new AoTree();
 }
 Plane.prototype.addDim = function(key, type, tree) {
   this.dimentions.push(key);
-  const newNode = new Node(tree, type);
-  if (!this.root) {
-    if (type) throw new Error("this must be a value node");
-    this.root = new Node(tree, type);
-  } else {
-    let newRoot = new Node(
-      `${this.dimentions[this.dimentions.length - 2]} ${type} ${key}`,
-      type
-    );
-    let tmp = this.root;
-    newRoot.left = tmp;
-    newRoot.right = newNode;
-    this.root = newRoot;
-  }
+  let newNode = new AoNode(tree);
 
-  return this.root;
+  if (this.tree.isEmpty()) {
+    this.tree.add(newNode);
+  } else {
+    let aoNode = new AoNode(this.dimentions.join(" "), type);
+    aoNode.left = this.tree.root;
+    aoNode.right = newNode;
+    this.tree.root = aoNode;
+  }
+  return this.tree;
 };
-// multiple dimention cartesian product
-Plane.prototype.set = function(cur = null, curDim = 0) {
+Plane.prototype.points = function(node = null, curDim = 0) {
   ++curDim;
-  cur = cur || this.root;
-  if (cur.left === undefined || cur.right === undefined) {
-    return cur.val.set();
+  node = node || this.tree.root;
+  if (!node.balanced()) {
+    return node.data.points();
   }
 
   return cartesian(
-    this.set(cur.left, curDim),
-    this.set(cur.right, curDim),
-    cur.type,
+    this.points(node.left, curDim),
+    this.points(node.right, curDim),
+    node.type,
     this.dimentions.length - curDim
   );
-};
-
-Plane.prototype.balanced = function() {
-  return this.root.left !== undefined && this.root.right !== undefined;
 };
 
 const cartesian = function(left, right, type, curDim) {
