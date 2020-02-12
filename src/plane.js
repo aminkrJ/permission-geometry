@@ -49,7 +49,7 @@ Plane.prototype.coordinates = function(left, right, cur) {
       });
     });
   } else {
-    let lenOfC = this.tree.balancedNodes(cur) + 1;
+    let lenOfC = this.tree.leaves(cur);
     left.forEach(l => {
       let lenOfL = Array.isArray(l) ? l.length : 1;
       let zeros = Math.abs(lenOfC - lenOfL);

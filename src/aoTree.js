@@ -63,6 +63,19 @@ AoTree.prototype.balancedNodes = function(node) {
   }
   return count;
 };
+AoTree.prototype.leaves = function(node) {
+  const queue = [node];
+  let count = 0;
+  while (queue.length > 0) {
+    let cur = queue.pop();
+    if (cur.left) queue.unshift(cur.left);
+    if (cur.right) queue.unshift(cur.right);
+    if (!cur.balanced()) {
+      ++count;
+    }
+  }
+  return count;
+};
 AoTree.prototype.insert = function(node, cur) {
   const stack = [cur];
   while (stack.length > 0) {
