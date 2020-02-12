@@ -11,52 +11,65 @@ function Plane() {
 Plane.prototype.addDim = function(key, type, tree) {
   this.dimension.push(key);
   let newNode = new AoNode(tree);
-
   if (this.tree.isEmpty()) {
-    this.tree.add(newNode);
+    this.tree.root = newNode;
   } else {
-    let aoNode = new AoNode(this.dimension.join(" "), type);
-    aoNode.left = this.tree.root;
-    aoNode.right = newNode;
-    this.tree.root = aoNode;
+    let node = new AoNode(this.dimension.join(" "), type);
+    node.left = this.tree.root;
+    node.right = newNode;
+    this.tree.root = node;
   }
-  return this.tree;
+  return this;
 };
-Plane.prototype.points = function(node = null, curDim = 0) {
-  ++curDim;
+Plane.prototype.concat = function(plane) {
+  this.dimension.push(...plane.dimension);
+  let orNode = new AoNode(this.dimension.join(" "), or);
+  orNode.left = this.tree.root;
+  orNode.right = plane.tree.root;
+  this.tree.root = orNode;
+};
+Plane.prototype.points = function(node = null, count = 0) {
   node = node || this.tree.root;
   if (!node.balanced()) {
     return node.data.points();
   }
 
-  return cartesian(
-    this.points(node.left, curDim),
-    this.points(node.right, curDim),
-    node.type,
-    this.dimension.length - curDim
+  return this.coordinates(
+    this.points(node.left),
+    this.points(node.right),
+    node
   );
 };
-
-const cartesian = function(left, right, type, curDim) {
-  const cartesian = [];
-  if (type === and) {
+Plane.prototype.coordinates = function(left, right, cur) {
+  const coordinates = [];
+  if (cur.type === and) {
     left.forEach(l => {
       right.forEach(r => {
-        cartesian.push(_.flatten([l, r]));
+        coordinates.push(_.flatten([l, r]));
       });
     });
   } else {
+    let lenOfC = this.tree.balancedNodes(cur) + 1;
     left.forEach(l => {
-      let numOfZeros = curDim - (Array.isArray(l) ? l.length - 1 : 0);
-      cartesian.push(_.flatten([l, new Array(numOfZeros).fill("0")]));
+      let lenOfL = Array.isArray(l) ? l.length : 1;
+      let zeros = Math.abs(lenOfC - lenOfL);
+      if (zeros > 0) {
+        coordinates.push(_.flatten([l, new Array(zeros).fill("0")]));
+      } else {
+        coordinates.push(_.flatten([l]));
+      }
     });
-
     right.forEach(r => {
-      let numOfZeros = curDim - (Array.isArray(r) ? r.length - 1 : 0);
-      cartesian.push(_.flatten([new Array(numOfZeros).fill("0"), r]));
+      let lenOfR = Array.isArray(r) ? r.length : 1;
+      let zeros = Math.abs(lenOfC - lenOfR);
+      if (zeros > 0) {
+        coordinates.push(_.flatten([new Array(zeros).fill("0"), r]));
+      } else {
+        coordinates.push(_.flatten([r]));
+      }
     });
   }
-  return cartesian;
+  return coordinates;
 };
 
 export { Plane };
