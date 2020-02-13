@@ -1,4 +1,5 @@
-import { aoNode, queryToAoTree } from "../src/aoTree";
+import { queryToAoTree } from "../src/AoTree";
+import { AoNode } from "../src/AoNode";
 
 describe(".queryToAoTree", () => {
   it("returns value node", () => {

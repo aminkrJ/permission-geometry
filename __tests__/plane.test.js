@@ -1,5 +1,5 @@
-import { Plane } from "../src/plane";
-import { queryToAoTree, AoNode } from "../src/aoTree";
+import { Plane } from "../src/Plane";
+import { queryToAoTree } from "../src/AoTree";
 
 describe("plane", () => {
   describe(".concat", () => {
@@ -20,6 +20,29 @@ describe("plane", () => {
         ["2", "0", "0", "0"],
         ["0", "3", "0", "0"],
         ["0", "4", "0", "0"],
+        ["0", "0", "5", "0"],
+        ["0", "0", "6", "0"],
+        ["0", "0", "0", "7"],
+        ["0", "0", "0", "8"]
+      ]);
+    });
+    it("right concat two multi-dimensional planes including and", () => {
+      let dim1 = queryToAoTree("1 or 2");
+      let dim2 = queryToAoTree("3 or 4");
+      let dim3 = queryToAoTree("5 or 6");
+      let dim4 = queryToAoTree("7 or 8");
+      let plane1 = new Plane();
+      let plane2 = new Plane();
+      plane1.addDim("dim1", null, dim1);
+      plane1.addDim("dim2", "and", dim2);
+      plane2.addDim("dim3", null, dim3);
+      plane2.addDim("dim4", "or", dim4);
+      plane1.concat(plane2);
+      expect(plane1.points()).toEqual([
+        ["1", "3", "0", "0"],
+        ["1", "4", "0", "0"],
+        ["2", "3", "0", "0"],
+        ["2", "4", "0", "0"],
         ["0", "0", "5", "0"],
         ["0", "0", "6", "0"],
         ["0", "0", "0", "7"],

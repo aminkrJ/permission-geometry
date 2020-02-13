@@ -1,4 +1,5 @@
-import { AoNode, AoTree } from "./aoTree";
+import { AoTree } from "./AoTree";
+import { AoNode } from "./AoNode";
 import _ from "lodash";
 
 const and = "and";
@@ -23,10 +24,7 @@ Plane.prototype.addDim = function(key, type, tree) {
 };
 Plane.prototype.concat = function(plane) {
   this.dimension.push(...plane.dimension);
-  let orNode = new AoNode(this.dimension.join(" "), or);
-  orNode.left = this.tree.root;
-  orNode.right = plane.tree.root;
-  this.tree.root = orNode;
+  this.tree.concat(plane.tree);
 };
 Plane.prototype.points = function(node = null, count = 0) {
   node = node || this.tree.root;
