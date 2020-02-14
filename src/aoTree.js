@@ -16,13 +16,28 @@ AoRule.prototype.exists = function(pattern) {
 function AoTree() {
   this.root = null;
 }
+AoTree.prototype.make = function(data, type) {
+  return new AoNode(data, type, tree);
+};
 AoTree.prototype.points = function() {
   return this.root.points();
+};
+AoTree.prototype.isComplex = function() {
+  const leaves = this.leaves();
+  let complex = false;
+  for (let i = 0; i < leaves.length; i++) {
+    if (typeof leaves[i].data !== "string") {
+      complex = true;
+      break;
+    }
+  }
+  return complex;
 };
 AoTree.prototype.isEmpty = function() {
   return this.root === null;
 };
 AoTree.prototype.add = function(node, cur) {
+  node.tree = this;
   if (this.root === null) {
     this.root = node;
   } else {
@@ -30,20 +45,8 @@ AoTree.prototype.add = function(node, cur) {
   }
   return node;
 };
-AoTree.prototype.balancedNodes = function(node) {
-  const queue = [node];
-  let count = 0;
-  while (queue.length > 0) {
-    let cur = queue.pop();
-    if (cur.balanced()) {
-      ++count;
-      queue.unshift(cur.right, cur.left);
-    }
-  }
-  return count;
-};
 AoTree.prototype.leaves = function(node) {
-  const queue = [node];
+  const queue = [node || this.root];
   let leaves = [];
   while (queue.length > 0) {
     let cur = queue.pop();
@@ -73,15 +76,12 @@ AoTree.prototype.insert = function(node, cur) {
     }
   }
 };
-AoTree.prototype.concat = function(tree) {
-  let orNode = new AoNode(or, or);
-  orNode.left = this.root;
-  orNode.right = tree.root;
-  this.root = orNode;
+AoTree.prototype.concat = function(tree, type = or) {
+  let node = tree.make("concat", type);
+  node.left = this.root;
+  node.right = tree.root;
+  this.root = node;
 };
-/*
- * convert one dimension and/or query string to a and/or tree
- */
 const queryToAoTree = query => {
   const tree = new AoTree();
   const rule = new AoRule(query);
