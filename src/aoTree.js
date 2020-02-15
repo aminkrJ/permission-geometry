@@ -1,4 +1,5 @@
 import { AoNode } from "./AoNode";
+import _ from "lodash";
 
 const and = "and";
 const or = "or";
@@ -13,95 +14,153 @@ AoRule.prototype.exists = function(pattern) {
   return this.query.indexOf(pattern) > -1;
 };
 
-function AoTree() {
-  this.root = null;
+function AoTree(root = null) {
+  this.root = root;
 }
-AoTree.prototype.make = function(data, type) {
-  return new AoNode(data, type, tree);
+AoTree.prototype.isEmpty = function() {
+  return !Boolean(this.root);
 };
-AoTree.prototype.points = function() {
-  return this.root.points();
-};
-AoTree.prototype.isComplex = function() {
+AoTree.prototype.isMultiDimension = function() {
   const leaves = this.leaves();
-  let complex = false;
+  let dm = false;
   for (let i = 0; i < leaves.length; i++) {
-    if (typeof leaves[i].data !== "string") {
-      complex = true;
+    if (leaves[i].data instanceof AoTree) {
+      dm = true;
       break;
     }
   }
-  return complex;
+  return dm;
 };
-AoTree.prototype.isEmpty = function() {
-  return this.root === null;
-};
-AoTree.prototype.add = function(node, cur) {
-  node.tree = this;
-  if (this.root === null) {
-    this.root = node;
+AoTree.prototype.add = function(type, data) {
+  let node = new AoNode(type, data);
+  if (this.root) {
+    this.insert(node);
   } else {
-    this.insert(node, cur || this.root);
+    this.root = node;
   }
   return node;
 };
-AoTree.prototype.leaves = function(node) {
-  const queue = [node || this.root];
+AoTree.prototype.leaves = function(node = this.root) {
+  const queue = [node];
   let leaves = [];
   while (queue.length > 0) {
     let cur = queue.pop();
     if (cur.left) queue.unshift(cur.left);
     if (cur.right) queue.unshift(cur.right);
-    if (!cur.balanced()) {
+    if (cur.isLeaf()) {
       leaves.push(cur);
     }
   }
   return leaves;
 };
-AoTree.prototype.insert = function(node, cur) {
-  const stack = [cur];
+AoTree.prototype.insert = function(node) {
+  const stack = [this.root];
   while (stack.length > 0) {
     let cur = stack.pop();
-    if (cur.balanced()) {
-      stack.push(cur.right);
-      stack.push(cur.left);
+    if (!cur.isLeaf()) {
+      stack.push(cur.right, cur.left);
     } else {
-      node.parent = cur;
-      if (cur.left === null) {
-        cur.left = node;
-      } else {
-        cur.right = node;
-      }
-      return node;
+      cur.left ? (cur.right = node) : (cur.left = node);
+      break;
+    }
+  }
+  return node;
+};
+AoTree.prototype.concat = function(type, tree) {
+  let operator = new AoNode(type, "operator");
+  operator.right = new AoNode(null, tree);
+  operator.left = this.root;
+  this.root = operator;
+  return this;
+};
+AoTree.prototype.points = function(cur = this.root) {
+  // TODO refactoring to complex, operator and simple nodes
+  if (cur.isLeaf()) {
+    if (cur.data instanceof AoTree) {
+      if (!cur.data.root.isLeaf())
+        return d1coords(
+          this.points(cur.data.root.left),
+          this.points(cur.data.root.right),
+          cur.data.root,
+          this
+        );
+      return [cur.data.root.data];
+    }
+    return [cur.data];
+  } else {
+    if (this.isMultiDimension()) {
+      return dncoords(this.points(cur.left), this.points(cur.right), cur, this);
+    } else {
+      return d1coords(this.points(cur.left), this.points(cur.right), cur, this);
     }
   }
 };
-AoTree.prototype.concat = function(tree, type = or) {
-  let node = tree.make("concat", type);
-  node.left = this.root;
-  node.right = tree.root;
-  this.root = node;
-};
+
 const queryToAoTree = query => {
-  const tree = new AoTree();
+  return new AoTree(queryToAoNodes(query));
+};
+const queryToAoNodes = query => {
   const rule = new AoRule(query);
+  let node;
   if (!rule.isAnd && !rule.isOr) {
-    tree.add(new AoNode(query));
-    return tree;
+    node = new AoNode(null, query);
+    return node;
   }
-  let node, leftT, rightT;
   if (rule.isAnd) {
-    node = tree.add(new AoNode(query, and));
-    leftT = queryToAoTree(query.slice(0, query.indexOf(and) - 1));
-    rightT = queryToAoTree(query.slice(query.indexOf(and) + and.length + 1));
+    node = new AoNode(and, query);
+    node.left = queryToAoNodes(query.slice(0, query.indexOf(and) - 1));
+    node.right = queryToAoNodes(
+      query.slice(query.indexOf(and) + and.length + 1)
+    );
   } else if (rule.isOr) {
-    node = tree.add(new AoNode(query, or));
-    leftT = queryToAoTree(query.slice(0, query.indexOf(or) - 1));
-    rightT = queryToAoTree(query.slice(query.indexOf(or) + or.length + 1));
+    node = new AoNode(or, query);
+    node.left = queryToAoNodes(query.slice(0, query.indexOf(or) - 1));
+    node.right = queryToAoNodes(query.slice(query.indexOf(or) + or.length + 1));
   }
-  tree.add(leftT.root, node);
-  tree.add(rightT.root, node);
-  return tree;
+  return node;
+};
+const d1coords = (lcoords, rcoords, node, tree) => {
+  if (node.type === and) {
+    return cartesian(lcoords, rcoords, (l, r) => l + r);
+  } else if (node.type === or) {
+    return lcoords.concat(rcoords);
+  }
+};
+const dncoords = (lcoords, rcoords, node, tree) => {
+  let points = [];
+  if (node.type === and) {
+    return cartesian(lcoords, rcoords, (l, r) => _.flatten([l, r]));
+  } else {
+    let lenOfC = tree.leaves(node).length;
+    lcoords.forEach(l => {
+      let lenOfL = Array.isArray(l) ? l.length : 1;
+      let zeros = lenOfC - lenOfL;
+      if (zeros > 0) {
+        points.push(_.flatten([l, new Array(zeros).fill("0")]));
+      } else {
+        points.push(_.flatten([l]));
+      }
+    });
+    rcoords.forEach(r => {
+      let lenOfR = Array.isArray(r) ? r.length : 1;
+      let zeros = lenOfC - lenOfR;
+      if (zeros > 0) {
+        points.push(_.flatten([new Array(zeros).fill("0"), r]));
+      } else {
+        points.push(_.flatten([r]));
+      }
+    });
+  }
+  return points;
+};
+const cartesian = (lcoords, rcoords, op) => {
+  let cartesian = [];
+  lcoords.forEach(l => {
+    rcoords.forEach(r => {
+      cartesian.push(op(l, r));
+    });
+  });
+  return cartesian;
 };
 
 export { AoTree, queryToAoTree };

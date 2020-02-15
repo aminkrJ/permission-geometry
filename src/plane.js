@@ -4,24 +4,18 @@ const and = "and";
 const or = "or";
 
 function Plane() {
-  this.dimension = [];
   this.tree = new AoTree();
 }
-Plane.prototype.addDim = function(key, type, tree) {
-  this.dimension.push(key);
+Plane.prototype.addDimension = function(type, tree) {
   if (this.tree.isEmpty()) {
-    this.tree.root = tree.root;
+    this.tree.add(type, tree);
   } else {
-    this.tree.concat(tree, type);
+    this.tree.concat(type, tree);
   }
   return this;
 };
-Plane.prototype.concat = function(plane) {
-  this.dimension.push(...plane.dimension);
-  this.tree.concat(plane.tree);
-};
 Plane.prototype.points = function() {
-  return this.tree.root.points();
+  return this.tree.points(this.tree.root);
 };
 
 export { Plane };
