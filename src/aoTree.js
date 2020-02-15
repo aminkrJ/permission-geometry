@@ -4,16 +4,6 @@ import _ from "lodash";
 const and = "and";
 const or = "or";
 
-function AoRule(query) {
-  this.query = query;
-  // can be both
-  this.isAnd = this.exists(and);
-  this.isOr = this.exists(or);
-}
-AoRule.prototype.exists = function(pattern) {
-  return this.query.indexOf(pattern) > -1;
-};
-
 function AoTree(root = null) {
   this.root = root;
 }
@@ -96,29 +86,6 @@ AoTree.prototype.points = function(cur = this.root) {
   }
 };
 
-const queryToAoTree = query => {
-  return new AoTree(queryToAoNodes(query));
-};
-const queryToAoNodes = query => {
-  const rule = new AoRule(query);
-  let node;
-  if (!rule.isAnd && !rule.isOr) {
-    node = new AoNode(null, query);
-    return node;
-  }
-  if (rule.isAnd) {
-    node = new AoNode(and, query);
-    node.left = queryToAoNodes(query.slice(0, query.indexOf(and) - 1));
-    node.right = queryToAoNodes(
-      query.slice(query.indexOf(and) + and.length + 1)
-    );
-  } else if (rule.isOr) {
-    node = new AoNode(or, query);
-    node.left = queryToAoNodes(query.slice(0, query.indexOf(or) - 1));
-    node.right = queryToAoNodes(query.slice(query.indexOf(or) + or.length + 1));
-  }
-  return node;
-};
 const d1coords = (lcoords, rcoords, node, tree) => {
   if (node.type === and) {
     return cartesian(lcoords, rcoords, (l, r) => l + r);
@@ -163,4 +130,4 @@ const cartesian = (lcoords, rcoords, op) => {
   return cartesian;
 };
 
-export { AoTree, queryToAoTree };
+export { AoTree };
