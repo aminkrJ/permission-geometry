@@ -10,16 +10,15 @@ function AoTree(root = null) {
 AoTree.prototype.isEmpty = function() {
   return !Boolean(this.root);
 };
-AoTree.prototype.isMultiDimension = function() {
+AoTree.prototype.dimensions = function() {
   const leaves = this.leaves();
-  let dm = false;
+  let d = [];
   for (let i = 0; i < leaves.length; i++) {
     if (leaves[i].data instanceof AoTree) {
-      dm = true;
-      break;
+      d.push(leaves[i]);
     }
   }
-  return dm;
+  return d;
 };
 AoTree.prototype.add = function(type, data) {
   let node = new AoNode(type, data);
@@ -78,7 +77,8 @@ AoTree.prototype.points = function(cur = this.root) {
     }
     return [cur.data];
   } else {
-    if (this.isMultiDimension()) {
+    // TODO this can be cached instead of o(n)
+    if (this.dimensions().length > 0) {
       return dncoords(this.points(cur.left), this.points(cur.right), cur, this);
     } else {
       return d1coords(this.points(cur.left), this.points(cur.right), cur, this);
