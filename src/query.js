@@ -1,8 +1,12 @@
 import { AoNode } from "./AoNode";
 import { AoTree } from "./AoTree";
+import { Dimension } from "./Dimension";
 
 const and = "and";
 const or = "or";
+const is = "is";
+
+// TODO support for range and not
 
 function AoQuery(query) {
   this.query = query;
@@ -38,7 +42,11 @@ AoQuery.prototype.buildNode = function() {
   }
   return node;
 };
+AoQuery.prototype.dimension = function(key) {
+  return new Dimension(this.tree(), key);
+};
 AoQuery.prototype.tree = function() {
+  // TODO this can be cached
   return new AoTree(this.buildNode());
 };
 

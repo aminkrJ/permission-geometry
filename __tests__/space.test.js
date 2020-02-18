@@ -1,13 +1,13 @@
 import { Plane } from "../src/Plane";
 import { AoQuery } from "../src/AoQuery";
 
-const tree1 = new AoQuery("1 or 2").tree();
-const tree2 = new AoQuery("3 or 4").tree();
-const tree3 = new AoQuery("5 or 6").tree();
-const tree4 = new AoQuery("1 and 2").tree();
-const tree5 = new AoQuery("3 and 4").tree();
-const tree6 = new AoQuery("5 and 6").tree();
-const tree7 = new AoQuery("1").tree();
+const dim1 = new AoQuery("1 or 2").dimension("t1");
+const dim2 = new AoQuery("3 or 4").dimension("t2");
+const dim3 = new AoQuery("5 or 6").dimension("t3");
+const dim4 = new AoQuery("1 and 2").dimension("t4");
+const dim5 = new AoQuery("3 and 4").dimension("t5");
+const dim6 = new AoQuery("5 and 6").dimension("t6");
+const dim7 = new AoQuery("1").dimension("t7");
 
 describe("plane", () => {
   describe(".addDimension", () => {
@@ -16,8 +16,8 @@ describe("plane", () => {
       plane = new Plane();
     });
     it("two dimensional with and", () => {
-      plane.addDimension(null, tree1);
-      plane.addDimension("and", tree2);
+      plane.addDimension(null, dim1);
+      plane.addDimension("and", dim2);
       expect(plane.tree.root.type).toBe("and");
       expect(plane.points()).toEqual([
         ["1", "3"],
@@ -27,8 +27,8 @@ describe("plane", () => {
       ]);
     });
     it("two dimensional with or", () => {
-      plane.addDimension(null, tree1);
-      plane.addDimension("or", tree2);
+      plane.addDimension(null, dim1);
+      plane.addDimension("or", dim2);
       expect(plane.tree.root.type).toBe("or");
       expect(plane.points()).toEqual([
         ["1", "0"],
@@ -38,9 +38,9 @@ describe("plane", () => {
       ]);
     });
     it("three dimensional with or", () => {
-      plane.addDimension(null, tree1);
-      plane.addDimension("or", tree2);
-      plane.addDimension("or", tree3);
+      plane.addDimension(null, dim1);
+      plane.addDimension("or", dim2);
+      plane.addDimension("or", dim3);
       expect(plane.tree.root.type).toBe("or");
       expect(plane.points()).toEqual([
         ["1", "0", "0"],
@@ -52,22 +52,22 @@ describe("plane", () => {
       ]);
     });
     it("three dimensional with and", () => {
-      plane.addDimension(null, tree4);
-      plane.addDimension("and", tree5);
-      plane.addDimension("and", tree6);
+      plane.addDimension(null, dim4);
+      plane.addDimension("and", dim5);
+      plane.addDimension("and", dim6);
       expect(plane.tree.root.type).toBe("and");
       expect(plane.points()).toEqual([["12", "34", "56"]]);
     });
     it("three dimensional with and ex 2", () => {
-      plane.addDimension(null, tree7);
-      plane.addDimension("and", tree7);
-      plane.addDimension("and", tree7);
+      plane.addDimension(null, dim7);
+      plane.addDimension("and", dim7);
+      plane.addDimension("and", dim7);
       expect(plane.points()).toEqual([["1", "1", "1"]]);
     });
     it("three dimensional with and/or", () => {
-      plane.addDimension(null, tree1);
-      plane.addDimension("and", tree2);
-      plane.addDimension("and", tree7);
+      plane.addDimension(null, dim1);
+      plane.addDimension("and", dim2);
+      plane.addDimension("and", dim7);
       expect(plane.points()).toEqual([
         ["1", "3", "1"],
         ["1", "4", "1"],
