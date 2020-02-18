@@ -1,25 +1,21 @@
 import { Space } from "../src/space";
 import { Query } from "../src/query";
 
-const dim1 = new Query("1 or 2").dimension("t1");
-const dim2 = new Query("3 or 4").dimension("t2");
-const dim3 = new Query("5 or 6").dimension("t3");
-const dim4 = new Query("1 and 2").dimension("t4");
-const dim5 = new Query("3 and 4").dimension("t5");
-const dim6 = new Query("5 and 6").dimension("t6");
-const dim7 = new Query("1").dimension("t7");
+const or = new Query("1 or 2");
+const and = new Query("1 and 2");
+const smpl = new Query("1");
 
-describe("plane", () => {
+describe("space", () => {
   describe(".addDimension", () => {
-    let plane;
+    let space;
     beforeEach(() => {
-      plane = new Space();
+      space = new Space();
     });
     it("two dimensional with and", () => {
-      plane.addDimension(null, dim1);
-      plane.addDimension("and", dim2);
-      expect(plane.tree.root.type).toBe("and");
-      expect(plane.points()).toEqual([
+      space.addDimension(null, dim1);
+      space.addDimension("and", dim2);
+      expect(space.tree.root.type).toBe("and");
+      expect(space.points()).toEqual([
         ["1", "3"],
         ["1", "4"],
         ["2", "3"],
@@ -27,10 +23,10 @@ describe("plane", () => {
       ]);
     });
     it("two dimensional with or", () => {
-      plane.addDimension(null, dim1);
-      plane.addDimension("or", dim2);
-      expect(plane.tree.root.type).toBe("or");
-      expect(plane.points()).toEqual([
+      space.addDimension(null, dim1);
+      space.addDimension("or", dim2);
+      expect(space.tree.root.type).toBe("or");
+      expect(space.points()).toEqual([
         ["1", "0"],
         ["2", "0"],
         ["0", "3"],
@@ -38,11 +34,11 @@ describe("plane", () => {
       ]);
     });
     it("three dimensional with or", () => {
-      plane.addDimension(null, dim1);
-      plane.addDimension("or", dim2);
-      plane.addDimension("or", dim3);
-      expect(plane.tree.root.type).toBe("or");
-      expect(plane.points()).toEqual([
+      space.addDimension(null, dim1);
+      space.addDimension("or", dim2);
+      space.addDimension("or", dim3);
+      expect(space.tree.root.type).toBe("or");
+      expect(space.points()).toEqual([
         ["1", "0", "0"],
         ["2", "0", "0"],
         ["0", "3", "0"],
@@ -52,23 +48,23 @@ describe("plane", () => {
       ]);
     });
     it("three dimensional with and", () => {
-      plane.addDimension(null, dim4);
-      plane.addDimension("and", dim5);
-      plane.addDimension("and", dim6);
-      expect(plane.tree.root.type).toBe("and");
-      expect(plane.points()).toEqual([["12", "34", "56"]]);
+      space.addDimension(null, dim4);
+      space.addDimension("and", dim5);
+      space.addDimension("and", dim6);
+      expect(space.tree.root.type).toBe("and");
+      expect(space.points()).toEqual([["12", "34", "56"]]);
     });
     it("three dimensional with and ex 2", () => {
-      plane.addDimension(null, dim7);
-      plane.addDimension("and", dim7);
-      plane.addDimension("and", dim7);
-      expect(plane.points()).toEqual([["1", "1", "1"]]);
+      space.addDimension(null, dim7);
+      space.addDimension("and", dim7);
+      space.addDimension("and", dim7);
+      expect(space.points()).toEqual([["1", "1", "1"]]);
     });
     it("three dimensional with and/or", () => {
-      plane.addDimension(null, dim1);
-      plane.addDimension("and", dim2);
-      plane.addDimension("and", dim7);
-      expect(plane.points()).toEqual([
+      space.addDimension(null, dim1);
+      space.addDimension("and", dim2);
+      space.addDimension("and", dim7);
+      expect(space.points()).toEqual([
         ["1", "3", "1"],
         ["1", "4", "1"],
         ["2", "3", "1"],
@@ -76,4 +72,5 @@ describe("plane", () => {
       ]);
     });
   });
+  describe(".points", () => {});
 });
