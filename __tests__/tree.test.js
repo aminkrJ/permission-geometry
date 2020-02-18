@@ -1,17 +1,16 @@
-import { AoQuery } from "../src/AoQuery";
-import { AoNode } from "../src/AoNode";
+import { Query } from "../src/query";
 
-const simple = new AoQuery("1").dimension("simple");
-const andOp = new AoQuery("1 and 2").dimension("andOp");
-const orOp = new AoQuery("1 or 2").dimension("orOp");
-const andOpOdd = new AoQuery("1 and 2 and 3").dimension("andOpOdd");
-const andOpEven = new AoQuery("1 and 2 and 3 and 4").dimension("andOpEven");
-const orOpEven = new AoQuery("1 or 2 or 3 or 4").dimension("orOpEven");
-const orOpOdd = new AoQuery("1 or 2 or 3").dimension("orOpOdd");
-const complex1 = new AoQuery("1 or 2 and 3 or 4 and 5").dimension("complex1");
-const complex2 = new AoQuery("1 and 2 or 3 and 4 or 5").dimension("complex2");
+const simple = new Query("1").dimension("simple");
+const andOp = new Query("1 and 2").dimension("andOp");
+const orOp = new Query("1 or 2").dimension("orOp");
+const andOpOdd = new Query("1 and 2 and 3").dimension("andOpOdd");
+const andOpEven = new Query("1 and 2 and 3 and 4").dimension("andOpEven");
+const orOpEven = new Query("1 or 2 or 3 or 4").dimension("orOpEven");
+const orOpOdd = new Query("1 or 2 or 3").dimension("orOpOdd");
+const complex1 = new Query("1 or 2 and 3 or 4 and 5").dimension("complex1");
+const complex2 = new Query("1 and 2 or 3 and 4 or 5").dimension("complex2");
 
-describe("AoQuery", () => {
+describe("Query", () => {
   describe("new query", () => {
     it("returns value node", () => {
       expect(simple.tree.root.data).toBe("1");

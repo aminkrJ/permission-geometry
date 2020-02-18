@@ -1,4 +1,4 @@
-import { Dimension } from "./Dimension";
+import { Dimension } from "./dimension";
 
 function AoNode(type, data) {
   this.data = data;
@@ -9,9 +9,6 @@ AoNode.prototype.isLeaf = function() {
 };
 AoNode.prototype.isSimple = function() {
   return typeof this.data === "string" || this.data instanceof String;
-};
-AoNode.prototype.isComplex = function() {
-  return this.data instanceof Dimension;
 };
 AoNode.prototype.isOperator = function() {
   return this.type === "and" || this.type === "or";

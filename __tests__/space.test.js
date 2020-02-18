@@ -1,19 +1,19 @@
-import { Plane } from "../src/Plane";
-import { AoQuery } from "../src/AoQuery";
+import { Space } from "../src/space";
+import { Query } from "../src/query";
 
-const dim1 = new AoQuery("1 or 2").dimension("t1");
-const dim2 = new AoQuery("3 or 4").dimension("t2");
-const dim3 = new AoQuery("5 or 6").dimension("t3");
-const dim4 = new AoQuery("1 and 2").dimension("t4");
-const dim5 = new AoQuery("3 and 4").dimension("t5");
-const dim6 = new AoQuery("5 and 6").dimension("t6");
-const dim7 = new AoQuery("1").dimension("t7");
+const dim1 = new Query("1 or 2").dimension("t1");
+const dim2 = new Query("3 or 4").dimension("t2");
+const dim3 = new Query("5 or 6").dimension("t3");
+const dim4 = new Query("1 and 2").dimension("t4");
+const dim5 = new Query("3 and 4").dimension("t5");
+const dim6 = new Query("5 and 6").dimension("t6");
+const dim7 = new Query("1").dimension("t7");
 
 describe("plane", () => {
   describe(".addDimension", () => {
     let plane;
     beforeEach(() => {
-      plane = new Plane();
+      plane = new Space();
     });
     it("two dimensional with and", () => {
       plane.addDimension(null, dim1);

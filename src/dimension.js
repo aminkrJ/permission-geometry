@@ -1,4 +1,4 @@
-import { Point, dncoords, d1coords } from "./Point";
+import { Point } from "./point";
 
 function Dimension(axis) {
   this.positions = new AoTree();

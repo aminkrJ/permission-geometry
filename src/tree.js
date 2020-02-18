@@ -1,4 +1,4 @@
-import { AoNode } from "./AoNode";
+import { Node } from "./node";
 
 const and = "and";
 const or = "or";
@@ -11,7 +11,7 @@ AoTree.prototype.isEmpty = function() {
   return !Boolean(this.root);
 };
 AoTree.prototype.add = function(type, data) {
-  let node = new AoNode(type, data);
+  let node = new Node(type, data);
   if (this.root) {
     this.insert(node);
   } else {

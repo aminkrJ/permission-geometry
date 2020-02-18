@@ -1,8 +1,8 @@
-import { AoTree } from "./AoTree";
-import { Dimension } from "./Dimension";
+import { Tree } from "./tree";
+import { Dimension } from "./dimension";
 
 function Space() {
-  this.dimensions = new AoTree();
+  this.dimensions = new Tree();
 }
 Space.prototype.addDimension = function(type, dimension) {
   if (this.dimensions.isEmpty()) {
