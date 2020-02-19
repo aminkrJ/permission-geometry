@@ -1,9 +1,9 @@
 import { Space } from "../src/space";
 import { Query } from "../src/query";
 
-const or = new Query("1 or 2");
-const and = new Query("1 and 2");
-const smpl = new Query("1");
+const d1 = new Dimension("d1");
+const d2 = new Dimension("d2");
+const d3 = new Dimension("d3");
 
 describe("space", () => {
   describe(".addDimension", () => {
@@ -12,15 +12,9 @@ describe("space", () => {
       space = new Space();
     });
     it("two dimensional with and", () => {
-      space.addDimension(null, dim1);
-      space.addDimension("and", dim2);
-      expect(space.tree.root.type).toBe("and");
-      expect(space.points()).toEqual([
-        ["1", "3"],
-        ["1", "4"],
-        ["2", "3"],
-        ["2", "4"]
-      ]);
+      space.addDimension(null, d1);
+      space.addDimension("and", d2);
+      expect(space.points()).toEqual([]);
     });
     it("two dimensional with or", () => {
       space.addDimension(null, dim1);

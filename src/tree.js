@@ -1,16 +1,20 @@
 import { Node } from "./node";
+import { Point } from "./point";
 
 const and = "and";
 const or = "or";
 const origin = 0;
 
-function AoTree(root = null) {
+function Tree(root = null) {
   this.root = root;
 }
-AoTree.prototype.isEmpty = function() {
+Tree.prototype.hasOperands = function(node = this.root) {
+  return node.left && node.right;
+};
+Tree.prototype.isEmpty = function() {
   return !Boolean(this.root);
 };
-AoTree.prototype.add = function(type, data) {
+Tree.prototype.add = function(type, data) {
   let node = new Node(type, data);
   if (this.root) {
     this.insert(node);
@@ -19,7 +23,7 @@ AoTree.prototype.add = function(type, data) {
   }
   return node;
 };
-AoTree.prototype.leaves = function(node = this.root) {
+Tree.prototype.leaves = function(node = this.root) {
   const queue = [node];
   let leaves = [];
   while (queue.length > 0) {
@@ -32,7 +36,7 @@ AoTree.prototype.leaves = function(node = this.root) {
   }
   return leaves;
 };
-AoTree.prototype.insert = function(node) {
+Tree.prototype.insert = function(node) {
   const stack = [this.root];
   while (stack.length > 0) {
     let cur = stack.pop();
@@ -45,26 +49,40 @@ AoTree.prototype.insert = function(node) {
   }
   return node;
 };
-AoTree.prototype.concat = function(type, data) {
-  let operator = new AoNode(type, "operator");
-  operator.right = new AoNode(null, data);
+Tree.prototype.concat = function(type, data) {
+  let operator = new Node(type, "operator");
+  operator.right = new Node(null, data);
   operator.left = this.root;
   this.root = operator;
   return this;
 };
-AoTree.prototype.operate = function(andOp, orOp, cur = this.root) {
+Tree.prototype.operate = function(andOp, orOp, sOp, cur = this.root) {
   if (!cur) return orgin;
-  if (cur.isEmpty()) return cur.data;
+  if (cur.isLeaf()) {
+    return sOp(cur.data);
+  }
   if (cur.type === and) {
     return andOp(
-      this.operate(andOp, orOp, cur.left),
-      this.operate(andOp, orOp, cur.right)
+      this.operate(andOp, orOp, sOp, cur.left),
+      this.operate(andOp, orOp, sOp, cur.right)
     );
   } else {
     return orOp(
-      this.operate(andOp, orOp, cur.left),
-      this.operate(andOp, orOp, cur.right)
+      this.operate(andOp, orOp, sOp, cur.left),
+      this.operate(andOp, orOp, sOp, cur.right)
     );
   }
 };
-export { AoTree };
+Tree.prototype.includes = function(value) {
+  return this.leaves()
+    .map(l => l.data)
+    .includes(value);
+};
+Tree.prototype.search = function(value) {
+  let leaves = this.leaves();
+  for (let i = 0; i < leaves.length; i++) {
+    if (leaves[i].data === value) return leaves[i];
+  }
+  return null;
+};
+export { Tree };

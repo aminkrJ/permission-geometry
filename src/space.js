@@ -4,11 +4,22 @@ import { Dimension } from "./dimension";
 function Space() {
   this.dimensions = new Tree();
 }
+// multiple permissions
+Space.prototype.concat = function(space) {
+  this.dimensions.concat("or", space.dimensions);
+  return this;
+};
 Space.prototype.addDimension = function(type, dimension) {
   if (this.dimensions.isEmpty()) {
     this.dimensions.add(null, dimension);
   } else {
-    this.dimensions.concat(type, dimension);
+    if (this.dimensions.includes(dimension)) {
+      let dimension = this.dimensions.get(dimension);
+      // TODO this adds or between positions - can break the order of AND/OR
+      dimension.addPosition("or", dimension.positions);
+    } else {
+      this.dimensions.concat(type, dimension);
+    }
   }
   return this;
 };

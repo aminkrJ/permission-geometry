@@ -1,16 +1,16 @@
 import { Dimension } from "./dimension";
 
-function AoNode(type, data) {
+function Node(type, data) {
   this.data = data;
   this.type = type;
 }
-AoNode.prototype.isLeaf = function() {
+Node.prototype.isLeaf = function() {
   return !this.left || !this.right;
 };
-AoNode.prototype.isSimple = function() {
+Node.prototype.isSimple = function() {
   return typeof this.data === "string" || this.data instanceof String;
 };
-AoNode.prototype.isOperator = function() {
+Node.prototype.isOperator = function() {
   return this.type === "and" || this.type === "or";
 };
-export { AoNode };
+export { Node };

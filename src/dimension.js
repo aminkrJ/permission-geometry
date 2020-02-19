@@ -1,7 +1,8 @@
 import { Point } from "./point";
+import { Tree } from "./tree";
 
 function Dimension(axis) {
-  this.positions = new AoTree();
+  this.positions = new Tree();
   this.axis = axis;
 }
 // position type is a string
@@ -14,22 +15,37 @@ Dimension.prototype.addPosition = function(type, position) {
   return this;
 };
 Dimension.prototype.points = function() {
-  let points = [];
-  this.positions.operate(
-    (l, r) => {
-      let point = new Point();
-      point.setCoordinate(this.axis, `${l}-${r}`);
-      points.push(point);
+  if (this.positions.isEmpty()) return [];
+  return this.positions.operate(
+    (lPoints, rPoints) => {
+      let points = [];
+      lPoints.forEach(point1 => {
+        rPoints.forEach(point2 => {
+          point1.setCoordinate(
+            this.axis,
+            `${point1.coordinates[this.axis]}-${point2.coordinates[this.axis]}`
+          );
+          points.push(point1);
+        });
+      });
+      return points;
     },
-    (l, r) => {
-      let point1 = new Point();
-      let point2 = new Point();
-      point1.setCoordinate(this.axis, l);
-      point2.setCoordinate(this.axis, r);
-      point.push(point1, point2);
+    (lPoints, rPoints) => {
+      let points = [];
+      lPoints.forEach(point => {
+        points.push(point);
+      });
+      rPoints.forEach(point => {
+        points.push(point);
+      });
+      return points;
+    },
+    data => {
+      let point = new Point();
+      point.setCoordinate(this.axis, data);
+      return [point];
     }
   );
-  return points;
 };
 
 export { Dimension };
