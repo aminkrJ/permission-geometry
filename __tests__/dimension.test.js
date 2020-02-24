@@ -1,7 +1,7 @@
 import { Dimension } from "../src/dimension";
 import { Point } from "../src/point";
 
-let d1;
+let d1, d2;
 
 describe("dimension", () => {
   describe(".points", () => {
@@ -48,6 +48,21 @@ describe("dimension", () => {
       d1.addPosition(null, "1");
       d1.addPosition("or", "2");
       d1.addPosition("and", "3");
+      expect(d1.points()).toEqual([p1, p2]);
+    });
+  });
+  describe(".concat", () => {
+    beforeEach(() => {});
+    it("merge", () => {
+      let p1 = new Point();
+      p1.setCoordinate("d1", "1");
+      let p2 = new Point();
+      p2.setCoordinate("d1", "2");
+      d1 = new Dimension("d1");
+      d2 = new Dimension("d2");
+      d1.addPosition(null, "1");
+      d2.addPosition(null, "2");
+      d1.merge(d2);
       expect(d1.points()).toEqual([p1, p2]);
     });
   });

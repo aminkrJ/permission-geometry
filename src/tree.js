@@ -56,6 +56,13 @@ Tree.prototype.concat = function(type, data) {
   this.root = operator;
   return this;
 };
+Tree.prototype.merge = function(type, tree) {
+  let operator = new Node(type, "operator");
+  operator.right = tree.root;
+  operator.left = this.root;
+  this.root = operator;
+  return this;
+};
 Tree.prototype.operate = function(andOp, orOp, sOp, cur = this.root) {
   if (!cur) return orgin;
   if (cur.isLeaf()) {

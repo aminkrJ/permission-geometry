@@ -15,6 +15,10 @@ Dimension.prototype.addPosition = function(type, position) {
   }
   return this;
 };
+Dimension.prototype.merge = function(dimension) {
+  this.positions.merge("or", dimension.positions);
+  return this;
+};
 Dimension.prototype.isEmpty = function() {
   return this.positions.isEmpty();
 };

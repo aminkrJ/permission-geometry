@@ -15,10 +15,9 @@ Space.prototype.addDimension = function(type, dimension) {
   if (this.dimensions.isEmpty()) {
     this.dimensions.add(null, dimension);
   } else {
-    if (this.dimensions.includes(dimension)) {
-      let dimension = this.dimensions.get(dimension);
-      // TODO this adds or between positions - can break the order of AND/OR
-      dimension.addPosition("or", dimension.positions);
+    if (this.includes(dimension)) {
+      let d = this.search(dimension);
+      d.merge("or", dimension);
     } else {
       this.dimensions.concat(type, dimension);
     }
@@ -61,5 +60,17 @@ Space.prototype.points = function() {
     }
   );
 };
-
+Space.prototype.includes = function(dimension) {
+  return this.dimensions
+    .leaves()
+    .map(l => l.data.axis)
+    .includes(dimension.axis);
+};
+Space.prototype.search = function(dimension) {
+  let leaves = this.dimensions.leaves();
+  for (let i = 0; i < leaves.length; i++) {
+    if (leaves[i].data.axis === dimension.axis) return leaves[i].data;
+  }
+  return null;
+};
 export { Space };
