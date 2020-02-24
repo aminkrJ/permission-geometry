@@ -2,7 +2,7 @@ import { Point } from "./point";
 import { Tree } from "./tree";
 
 function Dimension(axis) {
-  this.positions = new Tree();
+  this.positions = new Tree(0);
   this.axis = axis;
 }
 // position type is a string
@@ -10,9 +10,13 @@ Dimension.prototype.addPosition = function(type, position) {
   if (this.positions.isEmpty()) {
     this.positions.add(null, position);
   } else {
+    if (this.positions.includes(position)) return this;
     this.positions.concat(type, position);
   }
   return this;
+};
+Dimension.prototype.isEmpty = function() {
+  return this.positions.isEmpty();
 };
 Dimension.prototype.points = function() {
   if (this.positions.isEmpty()) return [];

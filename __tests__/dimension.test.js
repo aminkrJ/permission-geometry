@@ -17,6 +17,13 @@ describe("dimension", () => {
       d1.addPosition(null, 5);
       expect(d1.points()).toEqual([p1]);
     });
+    it("duplicated position", () => {
+      let p1 = new Point();
+      p1.setCoordinate("d1", 5);
+      d1.addPosition(null, 5);
+      d1.addPosition("or", 5);
+      expect(d1.points()).toEqual([p1]);
+    });
     it("has one and operands", () => {
       let p1 = new Point();
       p1.setCoordinate("d1", "1-2");

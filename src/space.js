@@ -10,6 +10,8 @@ Space.prototype.concat = function(space) {
   return this;
 };
 Space.prototype.addDimension = function(type, dimension) {
+  if (dimension.isEmpty())
+    throw new Error("Dimension must contains one position");
   if (this.dimensions.isEmpty()) {
     this.dimensions.add(null, dimension);
   } else {
@@ -24,31 +26,38 @@ Space.prototype.addDimension = function(type, dimension) {
   return this;
 };
 Space.prototype.points = function() {
-  let points = [];
+  if (this.dimensions.isEmpty()) return [];
   return this.dimensions.operate(
     (lPoints, rPoints) => {
+      let points = [];
       lPoints.forEach(point1 => {
         rPoints.forEach(point2 => {
-          point1.setCoordinate(point2.coordinates);
+          point1.setCoordinates(point2.coordinates);
           points.push(point1);
         });
       });
       return points;
     },
     (lPoints, rPoints) => {
+      let points = [];
+      let lzero = Object.keys(rPoints[0].coordinates);
+      let rzero = Object.keys(lPoints[0].coordinates);
       lPoints.forEach(point => {
-        Object.keys(rPoints[0]).forEach(axis => {
+        lzero.forEach(axis => {
           point.setCoordinate(axis, 0);
         });
         points.push(point);
       });
       rPoints.forEach(point => {
-        Object.keys(lPoints[0]).forEach(axis => {
+        rzero.forEach(axis => {
           point.setCoordinate(axis, 0);
         });
         points.push(point);
       });
       return points;
+    },
+    dimension => {
+      return dimension.points();
     }
   );
 };

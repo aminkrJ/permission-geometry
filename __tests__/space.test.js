@@ -1,70 +1,96 @@
 import { Space } from "../src/space";
-import { Query } from "../src/query";
+import { Point } from "../src/point";
+import { Dimension } from "../src/dimension";
 
 const d1 = new Dimension("d1");
 const d2 = new Dimension("d2");
 const d3 = new Dimension("d3");
 
 describe("space", () => {
-  describe(".addDimension", () => {
+  describe(".points", () => {
     let space;
     beforeEach(() => {
       space = new Space();
     });
-    it("two dimensional with and", () => {
-      space.addDimension(null, d1);
-      space.addDimension("and", d2);
+    it("no dimensions", () => {
       expect(space.points()).toEqual([]);
     });
-    it("two dimensional with or", () => {
-      space.addDimension(null, dim1);
-      space.addDimension("or", dim2);
-      expect(space.tree.root.type).toBe("or");
-      expect(space.points()).toEqual([
-        ["1", "0"],
-        ["2", "0"],
-        ["0", "3"],
-        ["0", "4"]
-      ]);
+    it("one dimension", () => {
+      let p1 = new Point();
+      p1.setCoordinate("d1", "1");
+      let p2 = new Point();
+      p2.setCoordinate("d1", "2");
+      d1.addPosition(null, "1");
+      d1.addPosition("or", "2");
+      space.addDimension("and", d1);
+      expect(space.points()).toEqual([p1, p2]);
     });
-    it("three dimensional with or", () => {
-      space.addDimension(null, dim1);
-      space.addDimension("or", dim2);
-      space.addDimension("or", dim3);
-      expect(space.tree.root.type).toBe("or");
-      expect(space.points()).toEqual([
-        ["1", "0", "0"],
-        ["2", "0", "0"],
-        ["0", "3", "0"],
-        ["0", "4", "0"],
-        ["0", "0", "5"],
-        ["0", "0", "6"]
-      ]);
+    it("two dimensions with or", () => {
+      let p1 = new Point();
+      p1.setCoordinate("d1", "1");
+      p1.setCoordinate("d2", 0);
+      let p2 = new Point();
+      p2.setCoordinate("d1", "2");
+      p2.setCoordinate("d2", 0);
+      let p3 = new Point();
+      p3.setCoordinate("d1", 0);
+      p3.setCoordinate("d2", "3");
+      d1.addPosition(null, "1");
+      d1.addPosition("or", "2");
+      d2.addPosition(null, "3");
+      space.addDimension(null, d1);
+      space.addDimension("or", d2);
+      expect(space.points()).toEqual([p1, p2, p3]);
     });
-    it("three dimensional with and", () => {
-      space.addDimension(null, dim4);
-      space.addDimension("and", dim5);
-      space.addDimension("and", dim6);
-      expect(space.tree.root.type).toBe("and");
-      expect(space.points()).toEqual([["12", "34", "56"]]);
+    it("two dimensions with and", () => {
+      let p1 = new Point();
+      p1.setCoordinate("d1", "1");
+      p1.setCoordinate("d2", "3");
+      let p2 = new Point();
+      p2.setCoordinate("d1", "2");
+      p2.setCoordinate("d2", "3");
+      d1.addPosition(null, "1");
+      d1.addPosition("or", "2");
+      d2.addPosition(null, "3");
+      space.addDimension(null, d1);
+      space.addDimension("and", d2);
+      expect(space.points()).toEqual([p1, p2]);
     });
-    it("three dimensional with and ex 2", () => {
-      space.addDimension(null, dim7);
-      space.addDimension("and", dim7);
-      space.addDimension("and", dim7);
-      expect(space.points()).toEqual([["1", "1", "1"]]);
+    it("multiple dimensions but one dimension is empty", () => {
+      d1.addPosition(null, "1");
+      d1.addPosition("or", "2");
+      d2.addPosition(null, "3");
+      space.addDimension(null, d1);
+      space.addDimension("or", d2);
+      expect(() => {
+        space.addDimension("or", d3);
+      }).toThrowError();
     });
-    it("three dimensional with and/or", () => {
-      space.addDimension(null, dim1);
-      space.addDimension("and", dim2);
-      space.addDimension("and", dim7);
-      expect(space.points()).toEqual([
-        ["1", "3", "1"],
-        ["1", "4", "1"],
-        ["2", "3", "1"],
-        ["2", "4", "1"]
-      ]);
+    it("multiple dimensions", () => {
+      let p1 = new Point();
+      p1.setCoordinate("d1", "1");
+      p1.setCoordinate("d2", 0);
+      p1.setCoordinate("d3", 0);
+      let p2 = new Point();
+      p2.setCoordinate("d1", "2");
+      p2.setCoordinate("d2", 0);
+      p2.setCoordinate("d3", 0);
+      let p3 = new Point();
+      p3.setCoordinate("d2", "3");
+      p3.setCoordinate("d1", 0);
+      p3.setCoordinate("d3", 0);
+      let p4 = new Point();
+      p4.setCoordinate("d3", "4");
+      p4.setCoordinate("d1", 0);
+      p4.setCoordinate("d2", 0);
+      d1.addPosition(null, "1");
+      d1.addPosition("or", "2");
+      d2.addPosition(null, "3");
+      d3.addPosition(null, "4");
+      space.addDimension(null, d1);
+      space.addDimension("or", d2);
+      space.addDimension("or", d3);
+      expect(space.points()).toEqual([p1, p2, p3, p4]);
     });
   });
-  describe(".points", () => {});
 });
