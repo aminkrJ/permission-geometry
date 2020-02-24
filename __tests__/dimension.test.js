@@ -51,9 +51,9 @@ describe("dimension", () => {
       expect(d1.points()).toEqual([p1, p2]);
     });
   });
-  describe(".concat", () => {
+  describe(".merge", () => {
     beforeEach(() => {});
-    it("merge", () => {
+    it("concat different axis", () => {
       let p1 = new Point();
       p1.setCoordinate("d1", "1");
       let p2 = new Point();

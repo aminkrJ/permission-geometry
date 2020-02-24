@@ -6,7 +6,7 @@ function Space() {
 }
 // multiple permissions
 Space.prototype.concat = function(space) {
-  this.dimensions.concat("or", space.dimensions);
+  this.dimensions.merge("or", space.dimensions.root);
   return this;
 };
 Space.prototype.addDimension = function(type, dimension) {
@@ -17,7 +17,7 @@ Space.prototype.addDimension = function(type, dimension) {
   } else {
     if (this.includes(dimension)) {
       let d = this.search(dimension);
-      d.merge("or", dimension);
+      d.merge(dimension);
     } else {
       this.dimensions.concat(type, dimension);
     }

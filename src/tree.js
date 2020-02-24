@@ -56,9 +56,9 @@ Tree.prototype.concat = function(type, data) {
   this.root = operator;
   return this;
 };
-Tree.prototype.merge = function(type, tree) {
+Tree.prototype.merge = function(type, node) {
   let operator = new Node(type, "operator");
-  operator.right = tree.root;
+  operator.right = node;
   operator.left = this.root;
   this.root = operator;
   return this;

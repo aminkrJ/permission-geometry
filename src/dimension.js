@@ -16,7 +16,7 @@ Dimension.prototype.addPosition = function(type, position) {
   return this;
 };
 Dimension.prototype.merge = function(dimension) {
-  this.positions.merge("or", dimension.positions);
+  this.positions.merge("or", dimension.positions.root);
   return this;
 };
 Dimension.prototype.isEmpty = function() {

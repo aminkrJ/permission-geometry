@@ -2,16 +2,17 @@ import { Space } from "../src/space";
 import { Point } from "../src/point";
 import { Dimension } from "../src/dimension";
 
-const d1 = new Dimension("d1");
-const d2 = new Dimension("d2");
-const d3 = new Dimension("d3");
-const d33 = new Dimension("d3");
+let d1, d2, d3, d33;
 
 describe("space", () => {
   describe(".points", () => {
     let space;
     beforeEach(() => {
       space = new Space();
+      d1 = new Dimension("d1");
+      d2 = new Dimension("d2");
+      d3 = new Dimension("d3");
+      d33 = new Dimension("d3");
     });
     it("no dimensions", () => {
       expect(space.points()).toEqual([]);
@@ -116,8 +117,14 @@ describe("space", () => {
       beforeEach(() => {
         space1 = new Space();
         space2 = new Space();
+        d1 = new Dimension("d1");
+        d2 = new Dimension("d2");
+        d3 = new Dimension("d3");
       });
       it("concat dimensions of different spaces", () => {
+        d1 = new Dimension("d1");
+        d2 = new Dimension("d2");
+        d3 = new Dimension("d3");
         let p1 = new Point();
         p1.setCoordinate("d1", "1");
         p1.setCoordinate("d2", 0);
