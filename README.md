@@ -1,2 +1,2 @@
 # permission-geometry
-converting complex multi dimensional permission rules to unique points in a plane
+Indexing permissions with geometery by converting attribute based permission rules to unique points in a multi dimensional space.
