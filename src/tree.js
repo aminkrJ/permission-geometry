@@ -92,4 +92,7 @@ Tree.prototype.search = function(value) {
   }
   return null;
 };
+Tree.prototype.length = function() {
+  return this.leaves().length;
+};
 export { Tree };

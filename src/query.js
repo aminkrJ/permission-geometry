@@ -1,46 +1,46 @@
 import { Node } from "./node";
+import { Space } from "./space";
+import { Dimension } from "./dimension";
 import { Tree } from "./tree";
-
-const and = "and";
-const or = "or";
-const is = "is";
 
 // TODO support for range and not
 
-function AoQuery(query) {
+function Query(query) {
   this.query = query;
-  // can be both
-  this.isAnd = this.exists(and);
-  this.isOr = this.exists(or);
-  this.tree = new Tree(this.convertToAOTree());
 }
-AoQuery.prototype.exists = function(pattern) {
+Query.prototype.exists = function(pattern) {
   return this.query.indexOf(pattern) > -1;
 };
-AoQuery.prototype.convertToAOTree = function() {
-  let node;
-  if (!this.isAnd && !this.isOr) {
-    node = new Node(null, this.query);
-    return node;
+Query.prototype.convertToDimension = function(axis) {
+  let dimension = new Dimension(axis);
+  const pattern = /\b\s*(and|or)\s*\b/;
+  let positions = this.query.split(pattern);
+  positions.unshift(null);
+  for (let i = 1; i < positions.length; i += 2) {
+    dimension.addPosition(positions[i - 1], positions[i]);
   }
-  if (this.isAnd) {
-    node = new Node(and, this.query);
-    node.left = new AoQuery(
-      this.query.slice(0, this.query.indexOf(and) - 1)
-    ).convertToAOTree();
-    node.right = new AoQuery(
-      this.query.slice(this.query.indexOf(and) + and.length + 1)
-    ).convertToAOTree();
-  } else if (this.isOr) {
-    node = new Node(or, this.query);
-    node.left = new AoQuery(
-      this.query.slice(0, this.query.indexOf(or) - 1)
-    ).convertToAOTree();
-    node.right = new AoQuery(
-      this.query.slice(this.query.indexOf(or) + or.length + 1)
-    ).convertToAOTree();
+  return dimension;
+};
+Query.prototype.convertToSpace = function() {
+  const spacePattern = /\b(and|or)(?=\s*\w*\s*\bis)/;
+  const dimensionPattern = /\b\s*is\s*\b/;
+  const spaces = this.query.split(spacePattern);
+  let space = new Space();
+  spaces.unshift(null);
+  for (let i = 1; i < spaces.length; i += 2) {
+    let dimensionQ, operator, dimension, splitted;
+    splitted = spaces[i].split(dimensionPattern);
+    dimensionQ = new Query(splitted[1]);
+    dimension = dimensionQ.convertToDimension(splitted[0]);
+    operator = spaces[i - 1];
+    space.addDimension(operator, dimension);
   }
-  return node;
+  return space;
 };
 
-export { AoQuery };
+/**
+ * generate query from array of rule objects
+ */
+function buildFromObj(objs) {}
+
+export { Query };
