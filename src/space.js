@@ -30,10 +30,10 @@ dimensions.prototype.concat = function(operator, dimensions) {
 };
 dimensions.prototype.points = function() {
   return this._dimensions.operate(
-    (lPoints, rPoints) => {
+    (left, right) => {
       let points = [];
-      lPoints.forEach(point1 => {
-        rPoints.forEach(point2 => {
+      left.forEach(point1 => {
+        right.forEach(point2 => {
           points.push(point1.concat(point2));
         });
       });
