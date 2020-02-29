@@ -15,7 +15,7 @@ Query.prototype.convertToDimension = function(axis) {
   let positions = this.query.split(pattern);
   positions.unshift("");
   for (let i = 1; i < positions.length; i += 2) {
-    dimension.addPosition(positions[i - 1].trim(), positions[i].trim());
+    dimension.positions.add(positions[i].trim());
   }
   return dimension;
 };
@@ -31,7 +31,7 @@ Query.prototype.convertToSpace = function() {
     dimensionQ = new Query(splitted[1].trim());
     dimension = dimensionQ.convertToDimension(splitted[0].trim());
     operator = spaces[i - 1];
-    space.addDimension(operator, dimension);
+    space.dimensions.add(operator, dimension);
   }
   return space;
 };

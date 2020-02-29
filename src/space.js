@@ -1,76 +1,62 @@
-import { Tree } from "./tree";
+import { AoTree } from "./aotree";
 import { Dimension } from "./dimension";
 
 function Space() {
-  this.dimensions = new Tree();
+  this.dimensions = new dimensions();
 }
-// multiple permissions
-Space.prototype.concat = function(space) {
-  this.dimensions.merge("or", space.dimensions.root);
-  return this;
-};
-Space.prototype.addDimension = function(type, dimension) {
-  if (dimension.isEmpty())
-    throw new Error("Dimension must contains one position");
-  if (this.dimensions.isEmpty()) {
-    this.dimensions.add(null, dimension);
-  } else {
-    if (this.includes(dimension)) {
-      let d = this.search(dimension);
-      d.merge(dimension);
-    } else {
-      this.dimensions.concat(type, dimension);
-    }
-  }
-  return this;
+Space.prototype.concat = function(operator, space) {
+  this.dimensions.concat(operator, space.dimensions);
 };
 Space.prototype.points = function() {
   if (this.dimensions.isEmpty()) return [];
-  return this.dimensions.operate(
+  return this.dimensions.points();
+};
+Space.prototype.includes = function(dimension) {
+  return this.dimensions.includes(dimension);
+};
+function dimensions() {
+  this._dimensions = new AoTree();
+  this._hash = new Map();
+  this.size = 0;
+}
+dimensions.prototype.concat = function(operator, dimensions) {
+  this._dimensions.merge(operator, dimensions._dimensions.root);
+  for (let entry of dimensions._hash) {
+    if (!this._hash.has(entry[0])) {
+      this._hash.set(entry[0], true);
+      ++this.size;
+    }
+  }
+};
+dimensions.prototype.points = function() {
+  return this._dimensions.operate(
     (lPoints, rPoints) => {
       let points = [];
       lPoints.forEach(point1 => {
         rPoints.forEach(point2 => {
-          point1.setCoordinates(point2.coordinates);
-          points.push(point1);
+          points.push(point1.concat(point2));
         });
       });
       return points;
     },
-    (lPoints, rPoints) => {
-      let points = [];
-      let lzero = Object.keys(rPoints[0].coordinates);
-      let rzero = Object.keys(lPoints[0].coordinates);
-      lPoints.forEach(point => {
-        lzero.forEach(axis => {
-          point.setCoordinate(axis, 0);
-        });
-        points.push(point);
-      });
-      rPoints.forEach(point => {
-        rzero.forEach(axis => {
-          point.setCoordinate(axis, 0);
-        });
-        points.push(point);
-      });
-      return points;
+    (left, right) => {
+      return [...new Set([...left, ...right])];
     },
     dimension => {
       return dimension.points();
     }
   );
 };
-Space.prototype.includes = function(dimension) {
-  return this.dimensions
-    .leaves()
-    .map(l => l.data.axis)
-    .includes(dimension.axis);
+dimensions.prototype.isEmpty = function() {
+  return !this.size;
 };
-Space.prototype.search = function(dimension) {
-  let leaves = this.dimensions.leaves();
-  for (let i = 0; i < leaves.length; i++) {
-    if (leaves[i].data.axis === dimension.axis) return leaves[i].data;
-  }
-  return null;
+dimensions.prototype.includes = function(dimension) {
+  return this._hash.has(dimension.axis);
+};
+dimensions.prototype.add = function(operator, dimension) {
+  if (dimension.isEmpty()) throw new Error();
+  if (!this._hash.has(dimension.axis)) ++this.size;
+  this._hash.set(dimension.axis, true);
+  this._dimensions.insert(operator, dimension);
 };
 export { Space };
