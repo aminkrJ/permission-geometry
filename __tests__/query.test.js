@@ -1,6 +1,14 @@
 import { Query } from "../src/query";
 
 describe("Query", () => {
+  describe(".fromObject", () => {
+    it("generates", () => {
+      let query = new Query();
+      expect(query.fromObject({ city: [1, 2], country: 4 })).toEqual(
+        "city is 1 or 2 and country is 4"
+      );
+    });
+  });
   describe(".convertToDimension", () => {
     it("one position", () => {
       let query = new Query("1");

@@ -35,10 +35,20 @@ Query.prototype.convertToSpace = function() {
   }
   return space;
 };
-
-/**
- * generate query from array of rule objects
- */
-function buildFromObj(objs) {}
+Query.prototype.fromObject = function(obj) {
+  let query = "";
+  let i = 0;
+  const dimensionsToQuery = val => {
+    return Array.isArray(val) ? val.join(" or ") : val.toString();
+  };
+  for (let [key, value] of Object.entries(obj)) {
+    query =
+      query +
+      (i === 0 ? "" : " and ") +
+      `${key} is ${dimensionsToQuery(value)}`;
+    ++i;
+  }
+  return query;
+};
 
 export { Query };
