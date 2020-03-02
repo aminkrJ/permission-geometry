@@ -28,13 +28,37 @@ describe("Query", () => {
       let s1 = query.convertToSpace();
       expect(s1.dimensions.size).toEqual(3);
     });
-    it("multiple spaces concatination with same axis", () => {
+    it("multiple spaces or concatination with same axis", () => {
       let q1 = new Query("city is perth and age is 10");
       let q2 = new Query("city is perth and age is 20");
       let s1 = q1.convertToSpace();
       let s2 = q2.convertToSpace();
-      s1.concat("or", s2);
-      expect(s1.points().length).toEqual(2);
+      let union = s1.concat("or", s2);
+      expect(union.length).toEqual(2);
+    });
+    it("multiple spaces and concatination with same axis", () => {
+      let q1 = new Query("city is perth and age is 10");
+      let q2 = new Query("city is perth and age is 20");
+      let s1 = q1.convertToSpace();
+      let s2 = q2.convertToSpace();
+      let intersection = s1.concat("and", s2);
+      expect(intersection.length).toEqual(0);
+    });
+    it("multiple spaces and concatination with same axis", () => {
+      let q1 = new Query("city is perth and age is 10");
+      let q2 = new Query("city is perth and age is 20");
+      let s1 = q1.convertToSpace();
+      let s2 = q2.convertToSpace();
+      let intersection = s1.concat("and", s2);
+      expect(intersection.length).toEqual(0);
+    });
+    it("multiple spaces and concatination with same axis", () => {
+      let q1 = new Query("city is perth and age is 10 or 20");
+      let q2 = new Query("city is perth and age is 20");
+      let s1 = q1.convertToSpace();
+      let s2 = q2.convertToSpace();
+      let intersection = s1.concat("and", s2);
+      expect(intersection.length).toEqual(1);
     });
   });
 });

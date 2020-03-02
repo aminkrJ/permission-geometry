@@ -113,9 +113,8 @@ describe("space", () => {
       d2.positions.add(2);
       sp1.dimensions.add(null, d1);
       sp2.dimensions.add(null, d2);
-      sp1.concat("or", sp2);
-      expect(sp1.dimensions.size).toEqual(1);
-      expect(sp1.points()).toEqual([p1, p2]);
+      let union = sp1.concat("or", sp2);
+      expect(union).toEqual([p1, p2]);
     });
     it("concat dimensions of different spaces", () => {
       p1.coordinates.set("d1", 1);
@@ -132,9 +131,8 @@ describe("space", () => {
       sp1.dimensions.add("or", d2);
       sp2.dimensions.add(null, d3);
       sp2.dimensions.add("or", d4);
-      sp1.concat("or", sp2);
-      expect(sp1.dimensions.size).toEqual(4);
-      expect(sp1.points()).toEqual([p1, p2, p3, p4, p5]);
+      let union = sp1.concat("or", sp2);
+      expect(union).toEqual([p1, p2, p3, p4, p5]);
     });
     it("concat dimensions of different spaces, structure 2", () => {
       p1.coordinates.set("d1", 1);
@@ -148,9 +146,8 @@ describe("space", () => {
       sp1.dimensions.add(null, d1);
       sp1.dimensions.add("or", d2);
       sp2.dimensions.add(null, d3);
-      sp1.concat("or", sp2);
-      expect(sp1.dimensions.size).toEqual(3);
-      expect(sp1.points()).toEqual([p1, p2, p3, p4]);
+      let union = sp1.concat("or", sp2);
+      expect(union).toEqual([p1, p2, p3, p4]);
     });
   });
 });

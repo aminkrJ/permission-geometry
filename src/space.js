@@ -1,11 +1,24 @@
 import { AoTree } from "./aotree";
 import { Dimension } from "./dimension";
+import lodash from "lodash";
 
 function Space() {
   this.dimensions = new dimensions();
 }
 Space.prototype.concat = function(operator, space) {
-  this.dimensions.concat(operator, space.dimensions);
+  const cPoints = this.points();
+  const nPoints = space.points();
+  if (operator === "or") {
+    return [...cPoints, ...nPoints];
+  } else {
+    let points = [];
+    cPoints.forEach(c => {
+      nPoints.forEach(n => {
+        if (lodash.isEqual(c, n)) points.push(c);
+      });
+    });
+    return points;
+  }
 };
 Space.prototype.points = function() {
   if (this.dimensions.isEmpty()) return [];
